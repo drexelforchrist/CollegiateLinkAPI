@@ -1,0 +1,3 @@
+[submodule "libs/aCurl"]
+	path = libs/aCurl
+	url = https://github.com/jkrrv/aCurl.git
