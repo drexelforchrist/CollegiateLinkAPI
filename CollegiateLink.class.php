@@ -26,7 +26,7 @@ class CollegiateLink {
 	}
 
 	public function getOrganization($orgReference) {
-		include "CollegiateLinkOrganization.class.php";
-		return new CollegiateLinkOrganization($orgReference);
+		include "CollegiateLinkOrg.class.php";
+		return new CollegiateLinkOrg($orgReference);
 	}
 }
