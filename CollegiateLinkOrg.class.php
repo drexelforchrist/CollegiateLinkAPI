@@ -13,8 +13,8 @@ class CollegiateLinkOrg {
 	private $_clinkObj;
 
 	public function __construct($orgReference, &$clinkObj) {
-		$this->_orgReference = &$orgReference;
-		$this->_clinkObj = $clinkObj;
+		$this->_orgReference = $orgReference;
+		$this->_clinkObj = &$clinkObj;
 	}
 
 	public function getMembers($startPage = 1, $endPage = 10) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
