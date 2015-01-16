@@ -21,4 +21,12 @@ $clink = new CollegiateLink($baseUrl, $cookie);
 
 $dsfc = $clink->getOrganization("drexelforchrist");
 
-var_dump($dsfc->getMembers());
+require_once "CollegiateLinkPerson.class.php";
+
+//var_dump($dsfc->getMembers());
+
+$james = new CollegiateLinkPerson(631934, $clink);
+
+$james->loadMemberCard();
+
+
