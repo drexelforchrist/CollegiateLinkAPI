@@ -9,24 +9,27 @@ if (!defined('HDOM_TYPE_ELEMENT')) {
 }
 
 class CollegiateLink {
-	private $_status = 0;
 	private $_cookieFile;
-	private $_domain;
+	private $_baseUrl;
 
 
-	public function __construct($domain, $cookieFile) {
+	public function __construct($baseUrl, $cookieFile) {
 		/* It is assumed that the user is already authenticated. */
-		$this->_domain = $domain;
+		$this->_baseUrl = $baseUrl;
 		$this->_cookieFile = $cookieFile;
 	}
 
 
-	public function getStatus() {
-		return $this->_status;
-	}
 
 	public function getOrganization($orgReference) {
 		include "CollegiateLinkOrg.class.php";
-		return new CollegiateLinkOrg($orgReference);
+		return new CollegiateLinkOrg($orgReference, $this);
+	}
+
+	public function getBaseUrl() {
+		return $this->_baseUrl;
+	}
+	public function getCookieFile() {
+		return $this->_cookieFile;
 	}
 }
