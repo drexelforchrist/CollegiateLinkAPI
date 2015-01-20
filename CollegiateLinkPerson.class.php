@@ -20,11 +20,11 @@ class CollegiateLinkPerson {
 	private $CommunityMemberProfilePicture = null;
 	private $HasPicture = null;
 	private $ExternalWebsite = null;
-	private $HasExternalWebsite = null;
 	private $FacebookProfile = null;
-	private $HasFacebookProfile = null;
 	private $TwitterPage = null;
-	private $HasTwitterPage = null;
+	private $GooglePlusProfile = null;
+	private $LinkedInProfile = null;
+
 
 	/* Properties whose names aren't defined by data, but should be. */
 	private $emailAddresses = array();
@@ -38,28 +38,55 @@ class CollegiateLinkPerson {
 		if(is_array($idOrArray) && intval($idOrArray['CommunityMemberId'])>0) {
 			$this->CommunityMemberId = intval($idOrArray['CommunityMemberId']);
 
-			// KURTZ build from array
+			if(isset($idOrArray['CommunityMemberName'])) {
+				$this->CommunityMemberName = $idOrArray['CommunityMemberName'];
+			}
+			if(isset($idOrArray['HasPicture'])) {
+				$this->HasPicture = $idOrArray['HasPicture'];
+				if ($this->HasPicture) {
+					if (isset($idOrArray['CommunityMemberProfilePicture'])) {
+						$this->CommunityMemberProfilePicture = $idOrArray['CommunityMemberProfilePicture'];
+					}
+				}
+			}
+
 
 		} else if (intval($idOrArray) > 0) {
 			$this->CommunityMemberId = intval($idOrArray);
+		} else {
+			throw new Exception("Invalid argument supplied to CollegiateLinkPersonConstructor");
 		}
 	}
 
 	public function __get($name) {
 		switch ($name) {
-			case "CommunityMemberName": // missing break is intentional.
-				if (!$this->_loadedAttribs[$name]) {
-// KURTZ revise everything here.
-				}
+
+			//things that all people objects have.
 			case "CommunityMemberId":
 				return $this->$name;
 			break;
+
+			//things loaded by Member Card
+			case "CommunityMemberName": // missing break is intentional.
+			case "CommunityMemberProfilePicture":
+			case "ExternalWebsite":
+			case "FacebookProfile":
+			case "TwitterPage":
+			case "GooglePlusProfile":
+			case "LinkedInProfile":
+			case "emailAddresses":
+			case "preferredEmailAddress":
+				if ($this->$name!==null && $this->$name!==array()) { // Only load if the attrib no longer has the default value.
+					$this->loadMemberCard();
+				}
+				return $this->$name;
+				break;
 			default:
 				return null;
 		}
 	}
 
-	public function loadMemberCard() { // KURTZ make private or protected
+	protected function loadMemberCard() {
 		if ($this->__hasLoadedMemberCard) { // don't repeat if it's already been done.
 			return true;
 		}
@@ -70,6 +97,7 @@ class CollegiateLinkPerson {
 		$c->includeHeader(false);
 		$c->maxRedirects(0);
 		$c->createCurl();
+		$this->_clinkObj->incrementCurlCount();
 
 		if($c->getInfo()['http_code'] != 200) { // stop the nonsense if it didn't load.
 			return false;
@@ -85,7 +113,7 @@ class CollegiateLinkPerson {
 		if ($tag = $memberCard->find('a[class="email"]')) {
 			foreach ($tag as $email) {
 				$this->emailAddresses[] = substr($email->getAttribute("href"),7);
-				if (strpos($email->innertext(), "<span class=\"type\">pref</span>") !== false) {
+				if ((strpos($email->innertext(), "<span class=\"type\">pref</span>") !== false) || $this->preferredEmailAddress===null) {
 					$this->preferredEmailAddress = count($this->emailAddresses)-1;
 				}
 				echo "\n\n";
@@ -103,54 +131,67 @@ class CollegiateLinkPerson {
 
 		if ($tag = $memberCard->find('a[title="External Website"]', 0)) {
 			$this->ExternalWebsite = $tag->getAttribute('href');
-			$this->HasExternalWebsite = true;
 		} else {
-			$this->ExternalWebsite = null;
-			$this->HasExternalWebsite = false;
+			$this->ExternalWebsite = false;
 		}
 
 
 		if ($tag = $memberCard->find('a[title="Facebook Profile"]', 0)) {
 			$this->FacebookProfile = $tag->getAttribute('href');
-			$this->HasFacebookProfile = true;
 		} else {
-			$this->FacebookProfile = null;
-			$this->HasFacebookProfile = false;
+			$this->FacebookProfile = false;
 		}
 
 
 		if ($tag = $memberCard->find('a[title="Twitter Page"]', 0)) {
 			$this->TwitterPage = $tag->getAttribute('href');
-			$this->HasTwitterPage = true;
 		} else {
-			$this->TwitterPage = null;
-			$this->HasTwitterPage = false;
+			$this->TwitterPage = false;
 		}
 
 
 		if ($tag = $memberCard->find('a[title="Google Plus Profile"]', 0)) {
 			$this->GooglePlusProfile = $tag->getAttribute('href');
-			$this->HasGooglePlusProfile = true;
 		} else {
 			$this->GooglePlusProfile = null;
-			$this->HasGooglePlusProfile = false;
 		}
 
 
 		if ($tag = $memberCard->find('a[title="LinkedIn Profile"]', 0)) {
 			$this->LinkedInProfile = $tag->getAttribute('href');
-			$this->HasLinkedInProfile = true;
 		} else {
 			$this->LinkedInProfile = null;
-			$this->HasLinkedInProfile = false;
 		}
 
-
-		var_dump($this);
-
-		echo $memberCard;
-
 		return true;
+	}
+
+	public function getEmailAddr() {
+		if ($this->preferredEmailAddress===null) {
+			$this->loadMemberCard();
+		}
+		return $this->emailAddresses[$this->preferredEmailAddress];
+	}
+
+	public function getFullName() {
+		if ($this->CommunityMemberName===null) {
+			$this->loadMemberCard();
+		}
+		if (is_array($this->CommunityMemberName)) {
+			return implode(" ",$this->CommunityMemberName);
+		}
+		return $this->CommunityMemberName;
+	}
+
+	public function getLargeProfilePicture() {
+		if ($this->HasPicture===null) {
+			$this->loadMemberCard();
+		}
+		if ($this->HasPicture) {
+			return $this->_clinkObj->getBaseUrl() . "/images/W170xL170/0/noshadow/Profile/" . $this->CommunityMemberProfilePicture . ".jpg";
+		} else {
+			return false;
+		}
 	}
 
 }

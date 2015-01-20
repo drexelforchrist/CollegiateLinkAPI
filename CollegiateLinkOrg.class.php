@@ -19,6 +19,7 @@ class CollegiateLinkOrg {
 
 	public function getMembers($startPage = 1, $endPage = 10) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
 		$r = array();
+		include_once "CollegiateLinkPerson.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for details like "joined"
 		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
 			set_time_limit(5);
 			$c = new aCurl($this->_clinkObj->getBaseUrl() . "organization/" . $this->_orgReference . "/roster/members?Direction=Ascending&page=" . $page);
@@ -26,6 +27,7 @@ class CollegiateLinkOrg {
 			$c->includeHeader(false);
 			$c->maxRedirects(0);
 			$c->createCurl();
+			$this->_clinkObj->incrementCurlCount();
 
 			$h = new simple_html_dom((string)$c);
 			$people = $h->find("tr");
@@ -55,8 +57,7 @@ class CollegiateLinkOrg {
 				$personArr['CommunityMemberName'][] = $lastName->innertext();
 				unset($lastName, $id);
 
-				// KURTZ call Person constructor here and return Person object instead of arrays.
-				$r[] = $personArr;
+				$r[] = new CollegiateLinkPerson($personArr,$this->_clinkObj);
 			}
 
 

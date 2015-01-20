@@ -11,6 +11,7 @@ if (!defined('HDOM_TYPE_ELEMENT')) {
 class CollegiateLink {
 	private $_cookieFile;
 	private $_baseUrl;
+	private $curlCount = 0;
 
 
 	public function __construct($baseUrl, $cookieFile) {
@@ -19,6 +20,10 @@ class CollegiateLink {
 		$this->_cookieFile = $cookieFile;
 	}
 
+
+	public function __destruct() { // KURTZ remove for use.
+		echo "<b>Curl Request Count: " . $this->curlCount . "</b>";
+	}
 
 
 	public function getOrganization($orgReference) {
@@ -31,5 +36,8 @@ class CollegiateLink {
 	}
 	public function getCookieFile() {
 		return $this->_cookieFile;
+	}
+	public function incrementCurlCount() {
+		return ++$this->curlCount;
 	}
 }

@@ -21,12 +21,24 @@ $clink = new CollegiateLink($baseUrl, $cookie);
 
 $dsfc = $clink->getOrganization("drexelforchrist");
 
-require_once "CollegiateLinkPerson.class.php";
-
-//var_dump($dsfc->getMembers());
-
-$james = new CollegiateLinkPerson(631934, $clink);
-
-$james->loadMemberCard();
-
+echo "<table>";
+foreach ($dsfc->getMembers() as $num => $mem) {
+	echo "<tr><td>$num</td><td>";
+	echo $mem->getFullName();
+	echo "</td>";
+	echo "<td>";
+	echo $mem->getEmailAddr();
+	echo "</td>";
+	echo "<td>";
+	echo $mem->FacebookProfile;
+	echo "</td>";
+	echo "<td>";
+	$p = $mem->getLargeProfilePicture();
+	if ($p!==false) {
+		echo "<img src=\"$p\" />";
+	}
+	echo "</td>";
+	echo "</tr>";
+}
+echo "</table>";
 
