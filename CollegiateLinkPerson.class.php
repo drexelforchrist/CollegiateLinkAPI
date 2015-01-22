@@ -11,8 +11,7 @@ if (!defined('HDOM_TYPE_ELEMENT')) {
 class CollegiateLinkPerson {
 	private $__hasLoadedMemberCard = false;
 
-	private $_clinkObj;
-	private $_loadedAttribs = array();
+	protected $_clinkObj;
 
 	/* Properties defined by CollegiateLink terminology */
 	private $CommunityMemberId; // required in constructor

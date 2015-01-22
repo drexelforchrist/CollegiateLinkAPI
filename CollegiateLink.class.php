@@ -26,6 +26,11 @@ class CollegiateLink {
 	}
 
 
+	public function getACurl($url) {
+		return new aCurl($url);
+	}
+
+
 	public function getOrganization($orgReference) {
 		include "CollegiateLinkOrg.class.php";
 		return new CollegiateLinkOrg($orgReference, $this);

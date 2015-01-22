@@ -22,7 +22,7 @@ class CollegiateLinkOrg {
 		include_once "CollegiateLinkPerson.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for details like "joined"
 		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
 			set_time_limit(5);
-			$c = new aCurl($this->_clinkObj->getBaseUrl() . "organization/" . $this->_orgReference . "/roster/members?Direction=Ascending&page=" . $page);
+			$c = new aCurl($this->_clinkObj->getBaseUrl() . "organization/" . $this->_orgReference . "/roster/members?Direction=Ascending&page=" . $page);// KURTZ consider using a different source, like https://drexel.collegiatelink.net/organization/drexelforchrist/roster/manage?Direction=Ascending&Page=1 (note, though, that this one is only available to users with management permissions)
 			$c->setCookieFile($this->_clinkObj->getCookieFile());
 			$c->includeHeader(false);
 			$c->maxRedirects(0);
@@ -58,6 +58,69 @@ class CollegiateLinkOrg {
 				unset($lastName, $id);
 
 				$r[] = new CollegiateLinkPerson($personArr,$this->_clinkObj);
+			}
+
+
+			/* determine if there are more pages to load */
+			if ($pageSpan = $h->find('span[class="paginationLeft"]',0)) {
+				// parsing "Showing 1 - 15 of 66 "
+				preg_match_all('/[0-9]+/', $pageSpan->innertext(), $pagination);
+
+				if ($pagination[0][1] === $pagination[0][2]) {
+					break;
+				}
+			}
+		}
+		return $r;
+	}
+
+	public function getProspectiveMembers($startPage = 1, $endPage = 10) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
+		$r = array();
+		include_once "CollegiateLinkProspectiveMember.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for more details, such as approval.
+		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
+			set_time_limit(5);
+			$c = $this->_clinkObj->getACurl($this->_clinkObj->getBaseUrl() . "organization/" . $this->_orgReference . "/roster/prospective?Direction=Ascending&page=" . $page);
+			$c->setCookieFile($this->_clinkObj->getCookieFile());
+			$c->addRequestHeader("X-Requested-With: XMLHttpRequest");
+			$c->includeHeader(false);
+			$c->maxRedirects(0);
+			$c->createCurl();
+			$this->_clinkObj->incrementCurlCount();
+
+			$h = new simple_html_dom((string)$c);
+
+			$reqToken = $h->find('input[name="__RequestVerificationToken"]',0)->getAttribute("value");
+			$people = array_merge($h->find('tr[class="gridrow"]'), $h->find('tr[class="gridrow_alternate"]'));
+
+			foreach ($people as $person) {
+				if ($person->class == "gridHeader") {
+					continue;
+				}
+
+				$personArr = array();
+				$personArr['ReqToken'] = $reqToken;
+
+				$personArr['HasPicture'] = false;
+				$personArr['CommunityMemberProfilePicture'] = null;
+				if ($img = $person->find("img",0)) {
+					$personArr['HasPicture'] = true;
+					$personArr['CommunityMemberProfilePicture'] = substr($img->getAttribute("src"), 35, -4);
+				}
+				unset($img);
+
+				$personArr['RequestDate'] = $person->find("td", 2)->innertext();
+
+				$personName = $person->find("a", 0);
+				$personArr['CommunityMemberName'] = $personName->innertext();
+				$id = $personName->getAttribute("href");
+				$personArr['CommunityMemberId'] = intval(substr($id, 18));
+
+				$personArr['RelationshipId'] = $person->find("a", 1)->getAttribute("data-id");
+
+
+				unset($personName, $id);
+
+				$r[] = new CollegiateLinkProspectiveMember($personArr, $this->_clinkObj, $this->_orgReference);
 			}
 
 
