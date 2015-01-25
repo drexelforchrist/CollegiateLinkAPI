@@ -23,7 +23,11 @@ $dsfc = $clink->getOrganization("drexelforchrist");
 
 echo "<table>";
 foreach ($dsfc->getMembers() as $num => $mem) {
-	echo "<tr><td>$num</td><td>";
+	echo "<tr><td>$num</td>";
+	echo "<td>";
+	echo $mem->CommunityMemberId;
+	echo "</td>";
+	echo "<td>";
 	echo $mem->getFullName();
 	echo "</td>";
 	echo "<td>";
