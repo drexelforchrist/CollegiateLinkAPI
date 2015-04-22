@@ -19,6 +19,15 @@ $baseUrl = "https://drexel.collegiatelink.net/";
 
 $clink = new CollegiateLink($baseUrl, $cookie);
 
+$christOrgs = $clink->findOrganizations("Christ");
+
+foreach ($christOrgs as $o) {
+	$o->getMembers();
+	var_dump($o);
+}
+
+die();
+
 $dsfc = $clink->getOrganization("drexelforchrist");
 
 echo "<table>";

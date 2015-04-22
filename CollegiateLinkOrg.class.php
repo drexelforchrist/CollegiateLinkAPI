@@ -21,7 +21,7 @@ class CollegiateLinkOrg {
 		$r = array();
 		include_once "CollegiateLinkPerson.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for details like "joined"
 		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
-			set_time_limit(5);
+			set_time_limit(30);
 			$c = new aCurl($this->_clinkObj->getBaseUrl() . "organization/" . $this->_orgReference . "/roster/members?Direction=Ascending&page=" . $page);// KURTZ consider using a different source, like https://drexel.collegiatelink.net/organization/drexelforchrist/roster/manage?Direction=Ascending&Page=1 (note, though, that this one is only available to users with management permissions)
 			$c->setCookieFile($this->_clinkObj->getCookieFile());
 			$c->includeHeader(false);
@@ -30,6 +30,8 @@ class CollegiateLinkOrg {
 			$this->_clinkObj->incrementCurlCount();
 
 			$h = new simple_html_dom((string)$c);
+
+			echo $h;
 			$people = $h->find("tr");
 
 			foreach ($people as $person) {
@@ -47,7 +49,9 @@ class CollegiateLinkOrg {
 				}
 				unset($img);
 
-				$personArr['Joined'] = $person->find("td", 3)->innertext();
+				echo $person;
+
+				$personArr['Joined'] = $person->find("div", 2)->innertext();
 
 				$personArr['CommunityMemberName'][] = $person->find("a", 0)->innertext();
 
@@ -78,7 +82,7 @@ class CollegiateLinkOrg {
 		$r = array();
 		include_once "CollegiateLinkProspectiveMember.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for more details, such as approval.
 		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
-			set_time_limit(5);
+			set_time_limit(30);
 			$c = $this->_clinkObj->getACurl($this->_clinkObj->getBaseUrl() . "organization/" . $this->_orgReference . "/roster/prospective?Direction=Ascending&page=" . $page);
 			$c->setCookieFile($this->_clinkObj->getCookieFile());
 			$c->addRequestHeader("X-Requested-With: XMLHttpRequest");

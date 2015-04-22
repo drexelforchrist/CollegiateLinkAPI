@@ -27,13 +27,54 @@ class CollegiateLink {
 
 
 	public function getACurl($url) {
-		return new aCurl($url);
+		$a = new aCurl($url);
+		$a->setVerifyPeer(false);
+		return $a;
 	}
 
 
 	public function getOrganization($orgReference) {
-		include "CollegiateLinkOrg.class.php";
+		include_once "CollegiateLinkOrg.class.php";
 		return new CollegiateLinkOrg($orgReference, $this);
+	}
+
+	public function findOrganizations($searchTerm, $startPage = 1, $endPage = 20) {
+		include_once "CollegiateLinkOrg.class.php";
+		$ret = [];
+		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
+			set_time_limit(30);
+			$c = new aCurl($this->getBaseUrl() . "organizations?SearchValue=" . urlencode($searchTerm) .  "&SearchType=Contains&SelectedCategoryId=0&CurrentPage=" . $page);
+			$c->setCookieFile($this->getCookieFile());
+			$c->includeHeader(false);
+			$c->addRequestHeader("X-Requested-With: XMLHttpRequest");
+			$c->maxRedirects(0);
+			$c->createCurl();
+			$this->incrementCurlCount();
+
+			$h = new simple_html_dom((string)$c);
+			$orgs = $h->find("h5");
+
+			foreach ($orgs as $org) {
+				try {
+					$org = $org->find("a",0)->href;
+
+					$ret[] = new CollegiateLinkOrg(substr($org, 14), $this);
+				} catch (Exception $e) {
+					die($e);
+				}
+
+			}
+
+
+			/* determine if there are more pages to load */
+			if ($pager = $h->find('div[id="pager"]',0)) {
+				// if there isn't a "next" link
+				if (strpos($pager, "Next") === FALSE) {
+					break;
+				}
+			}
+		}
+		return $ret;
 	}
 
 	public function getBaseUrl() {
