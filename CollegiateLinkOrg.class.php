@@ -18,7 +18,7 @@ class CollegiateLinkOrg {
 	}
 
 	public function getMembers($startPage = 1, $endPage = 10) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
-		$r = array();
+		$r = array(); // KURTZ consider caching, at least for duration of execution
 		include_once "CollegiateLinkPerson.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for details like "joined"
 		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
 			set_time_limit(30);
@@ -30,8 +30,6 @@ class CollegiateLinkOrg {
 			$this->_clinkObj->incrementCurlCount();
 
 			$h = new simple_html_dom((string)$c);
-
-			echo $h;
 			$people = $h->find("tr");
 
 			foreach ($people as $person) {
@@ -49,9 +47,7 @@ class CollegiateLinkOrg {
 				}
 				unset($img);
 
-				echo $person;
-
-				$personArr['Joined'] = $person->find("div", 2)->innertext();
+				$personArr['Joined'] = $person->find("td", 3)->innertext();
 
 				$personArr['CommunityMemberName'][] = $person->find("a", 0)->innertext();
 

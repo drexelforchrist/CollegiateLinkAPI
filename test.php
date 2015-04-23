@@ -23,10 +23,10 @@ $christOrgs = $clink->findOrganizations("Christ");
 
 foreach ($christOrgs as $o) {
 	$o->getMembers();
-	var_dump($o);
+//	var_dump($o);
 }
 
-die();
+//die();
 
 $dsfc = $clink->getOrganization("drexelforchrist");
 
