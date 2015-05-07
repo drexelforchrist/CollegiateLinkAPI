@@ -9,7 +9,7 @@
 
 require "CollegiateLink.class.php";
 
-require_once "authenticate.php";
+require_once "Tests/authenticate.php";
 
 authenticate();
 
@@ -23,10 +23,36 @@ $christOrgs = $clink->findOrganizations("Christ");
 
 foreach ($christOrgs as $o) {
 	$o->getMembers();
-//	var_dump($o);
+
+	echo "<h3>" . $o->name . "</h3>";
+
+	echo "<table>";
+	foreach ($o->getMembers() as $num => $mem) {
+		echo "<tr><td>$num</td>";
+		echo "<td>";
+		echo $mem->CommunityMemberId;
+		echo "</td>";
+		echo "<td>";
+		echo $mem->getFullName();
+		echo "</td>";
+		echo "<td>";
+		echo $mem->getEmailAddr();
+		echo "</td>";
+		echo "<td>";
+		echo $mem->FacebookProfile;
+		echo "</td>";
+		echo "<td>";
+		$p = $mem->getLargeProfilePicture();
+		if ($p!==false) {
+			echo "<img src=\"$p\" />";
+		}
+		echo "</td>";
+		echo "</tr>";
+	}
+	echo "</table>";
 }
 
-//die();
+die();
 
 $dsfc = $clink->getOrganization("drexelforchrist");
 
