@@ -1,23 +1,33 @@
 <?php
 
-if (!defined('HAS_ACURL_VERSION')) {
-	require_once "libs/aCurl/aCurl.php";
-}
 
-if (!defined('HDOM_TYPE_ELEMENT')) {
-	require_once "libs/php-dom-parser/php-dom-parser.php";
-}
-
+/**
+ * The CollegiateLinkOrg class contains the information and methods related to a single student organization.
+ *
+ * Class CollegiateLinkOrg
+ */
 class CollegiateLinkOrg {
 	private $_orgReference;
 	private $_clinkObj;
 
+	/**
+	 * @param String $orgReference  The reference string from the url to the organization's page.
+	 * @param CollegiateLink $clinkObj  The collegiateLink object that provides various resources.
+	 */
 	public function __construct($orgReference, &$clinkObj) {
 		$this->_orgReference = $orgReference;
 		$this->_clinkObj = &$clinkObj;
 	}
 
-	public function getMembers($startPage = 1, $endPage = 10) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
+	/**
+	 * getMembers returns an array of CollegiateLinkPersons.  Wraps the members list available to non-officers.
+	 *
+	 * @param int $startPage  The first page of results to include.  Defaults to 1.
+	 * @param int $endPage  The last page of results to include.  Defaults to 20; will not fetch more pages than there
+	 * are.
+	 * @return CollegiateLinkPerson[] A list of members.
+	 */
+	public function getMembers($startPage = 1, $endPage = 20) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
 		$r = array(); // KURTZ consider caching, at least for duration of execution
 		include_once "CollegiateLinkPerson.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for details like "joined"
 		for ($page = intval($startPage); $page <= intval($endPage); $page++) { // loop also breaks if reached end of list.  See end of loop for that.
@@ -74,6 +84,16 @@ class CollegiateLinkOrg {
 		return $r;
 	}
 
+
+	/**
+	 * getProspectiveMembers returns an array of CollegiateLinkProspectiveMembers (which extends CollegiateLinkPerson)
+	 * who have requested joining the organization on CollegiateLink.
+	 *
+	 * @param int $startPage
+	 * @param int $endPage
+	 * @return CollegiateLinkProspectiveMember[] An array of prospective members, which is an extension of
+	 * CollegiateLinkPerson that also allows for approval or rejection.
+	 */
 	public function getProspectiveMembers($startPage = 1, $endPage = 10) { // 15 per page.  If the org has members listed in their officer section, that's a much more efficient way to get this stuff.
 		$r = array();
 		include_once "CollegiateLinkProspectiveMember.class.php"; // KURTZ consider using a different class that extends CollegiateLinkPerson that allows for more details, such as approval.
