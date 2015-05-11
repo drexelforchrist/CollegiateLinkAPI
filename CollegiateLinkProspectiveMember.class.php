@@ -55,7 +55,6 @@ class CollegiateLinkProspectiveMember extends CollegiateLinkPerson {
 							"__RequestVerificationToken" => $this->__RequestVerificationToken));
 		$c->maxRedirects(4);
 		$c->createCurl();
-		// KURTZ there's something wrong here somewhere.
 		$this->_clinkObj->incrementCurlCount();
 	}
 }

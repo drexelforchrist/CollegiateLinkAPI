@@ -19,65 +19,71 @@ $baseUrl = "https://drexel.collegiatelink.net/";
 
 $clink = new CollegiateLink($baseUrl, $cookie);
 
-$christOrgs = $clink->findOrganizations("Christ");
-
-foreach ($christOrgs as $o) {
-	$o->getMembers();
-
-	echo "<h3>" . $o->name . "</h3>";
-
-	echo "<table>";
-	foreach ($o->getMembers() as $num => $mem) {
-		echo "<tr><td>$num</td>";
-		echo "<td>";
-		echo $mem->CommunityMemberId;
-		echo "</td>";
-		echo "<td>";
-		echo $mem->getFullName();
-		echo "</td>";
-		echo "<td>";
-		echo $mem->getEmailAddr();
-		echo "</td>";
-		echo "<td>";
-		echo $mem->FacebookProfile;
-		echo "</td>";
-		echo "<td>";
-		$p = $mem->getLargeProfilePicture();
-		if ($p!==false) {
-			echo "<img src=\"$p\" />";
-		}
-		echo "</td>";
-		echo "</tr>";
-	}
-	echo "</table>";
-}
-
-die();
+//$christOrgs = $clink->findOrganizations("Christ");
+//
+//foreach ($christOrgs as $o) {
+//	$o->getMembers();
+//
+//	echo "<h3>" . $o->name . "</h3>";
+//
+//	echo "<table>";
+//	foreach ($o->getMembers() as $num => $mem) {
+//		echo "<tr><td>$num</td>";
+//		echo "<td>";
+//		echo $mem->CommunityMemberId;
+//		echo "</td>";
+//		echo "<td>";
+//		echo $mem->getFullName();
+//		echo "</td>";
+//		echo "<td>";
+//		echo $mem->getEmailAddr();
+//		echo "</td>";
+//		echo "<td>";
+//		echo $mem->FacebookProfile;
+//		echo "</td>";
+//		echo "<td>";
+//		$p = $mem->getLargeProfilePicture();
+//		if ($p!==false) {
+//			echo "<img src=\"$p\" />";
+//		}
+//		echo "</td>";
+//		echo "</tr>";
+//	}
+//	echo "</table>";
+//}
+//
+//die();
 
 $dsfc = $clink->getOrganization("drexelforchrist");
 
+
 echo "<table>";
-foreach ($dsfc->getMembers() as $num => $mem) {
+foreach ($dsfc->getProspectiveMembers() as $num => $prospective) {
 	echo "<tr><td>$num</td>";
 	echo "<td>";
-	echo $mem->CommunityMemberId;
+	echo $prospective->CommunityMemberId;
 	echo "</td>";
 	echo "<td>";
-	echo $mem->getFullName();
+	echo $prospective->getFullName();
 	echo "</td>";
 	echo "<td>";
-	echo $mem->getEmailAddr();
+	echo $prospective->getEmailAddr();
 	echo "</td>";
 	echo "<td>";
-	echo $mem->FacebookProfile;
+	echo $prospective->FacebookProfile;
 	echo "</td>";
 	echo "<td>";
-	$p = $mem->getLargeProfilePicture();
+	$p = $prospective->getLargeProfilePicture();
 	if ($p!==false) {
 		echo "<img src=\"$p\" />";
 	}
 	echo "</td>";
 	echo "</tr>";
+
+
+	$prospective->approveMember();
+
+	die();
 }
 echo "</table>";
 
