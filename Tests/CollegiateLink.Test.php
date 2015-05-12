@@ -2,7 +2,7 @@
 //require_once 'PHPUnit/Framework.php';
 //require_once 'PHPUnit/Autoload.php';
 
-require_once "../CollegiateLink.class.php";
+require_once "/src/CollegiateLink.class.php";
 
 class CollegiateLink_Test extends PHPUnit_Framework_TestCase {
 	protected function setUp() {
