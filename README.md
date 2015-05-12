@@ -196,3 +196,8 @@ If you want to print out a list of members, complete with their community member
     echo "</table>";
  
  And just like that, we've solved one of the biggest gripes of CollegiateLink: easily exporting members' email addresses. 
+ 
+ 
+ ### Everything Else
+ 
+ The entirety of the API is documented with PHPDocs, which can be easily read in the Docs directory. 
