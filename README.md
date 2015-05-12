@@ -3,26 +3,26 @@ CollegiateLink API
 
 This is a PHP API for interfacing with CollegiateLink, a service available to universities from CampusLabs, for managing Student Organizations.  This API is not in any way authorised, approved, or supported by CampusLabs.
 
-# License
+## License
 
-Don't break laws.  Don't break your institution's terms of use.  Don't attempt to use this to access data that isn't meant for you (such atrtempts won't work anyway).  Otherwise, use this however you want at your own risk.  The contributors take no responsibility for your behavior. 
+Don't break laws.  Don't break your institution's terms of use.  Don't attempt to use this to access data that isn't meant for you (such attempts won't work anyway).  Otherwise, use this however you want at your own risk.  The contributors take no responsibility for your behavior. 
 
 If you expand or improve this API, you must at least consider submitting a pull request. 
 
-# Motivation
+## Motivation
 
 To campus leaders, CollegiateLink is difficult to use for meaningful productivity.  For instance, there's no way to integrate it with a student organization's external website.  This API is meant to help fix that.  Essentially, this API simply mimics user actions. 
 
-# Prerequisites
+## Prerequisites
 
  - PHP >5.0
  - some idea of how to write PHP.
 
-# Use
+## Use
 
 Before you can use the API in a meaningful way, you need to authenticate yourself as an authorized user.  If you're just doing this as a stand-alone project, you'll likely find it easiest to use the included aCurl and dom-parser submodules (both of which are required for this API) to emulate a user in a browser. 
 
-## Authentication
+### Authentication
 
 First, you must authenticate yourself with your school's authentication system.  The maintainers of this project are affiliated with Drexel University, and for us, authentication is completely handled by the following 'authenticate' function: (which is effective, but has lots of room for improvement.)
     
@@ -135,7 +135,7 @@ First, you must authenticate yourself with your school's authentication system. 
     }
     
     
-## Sample Use Cases
+### Sample Use Cases
 
 For the sake of these demos, we're going to assume that you're a leader of Drexel Students for Christ, a Student Organization (org) at Drexel University.  (You see, this is exactly what I am.)  
 
@@ -147,7 +147,7 @@ All use cases start with am object of the CollegiateLink class, which can be rec
     $clink = new CollegiateLink($baseUrl, $cookie);
   
  
-### The Org
+#### The Org
 
 Most of the operations of this API are meant for org leaders to be able to somewhat automate their administrative load.  For an org leader, the operations regarding the org are done through objects of the org class.  If you want to create an org object for a specific org, do so like this:
 
@@ -156,7 +156,7 @@ Most of the operations of this API are meant for org leaders to be able to somew
 where $clink is the CollegiateLink object we defined earlier, and "drexelforchrist" is the org-specific part of the URL to the org's page.  That is, https://drexel.collegiatelink.net/organizations/drexelforchrist results in "drexelforchrist". 
 
 
-### The Person
+#### The Person
 
 The most simple type of person we'll deal with is the "member" of an org.
 
