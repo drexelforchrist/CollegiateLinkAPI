@@ -4,6 +4,7 @@
   "description": "Access content of CollegiateLink automagically.",
   "keywords": ["CollegiateLink"],
   "homepage": "https://github.com/drexelforchrist/CollegiateLinkAPI",
+  "license": "See README",
   "authors": [
     {
       "name": "James Kurtz",
