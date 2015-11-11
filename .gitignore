@@ -51,3 +51,6 @@ crashlytics-build.properties
 
 Tests/authenticate.php
 collegiatelinkCookie.cky
+
+/composer.lock
+/vendor
