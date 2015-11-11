@@ -18,7 +18,8 @@
   },
   "require-dev": {
     "ext-curl": "*",
-    "phpunit/phpunit": "~4.0"
+    "phpunit/phpunit": "*",
+    "evert/phpdoc-md" : "~0.1.1"
   },
   "autoload": {
     "psr-0": {

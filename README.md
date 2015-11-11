@@ -9,14 +9,22 @@ Don't break laws.  Don't break your institution's terms of use.  Don't attempt t
 
 If you expand or improve this API, you must at least consider submitting a pull request. 
 
-## Motivation
+## Installation
 
-To campus leaders, CollegiateLink is difficult to use for meaningful productivity.  For instance, there's no way to integrate it with a student organization's external website.  This API is meant to help fix that.  Essentially, this API simply mimics user actions. 
+Use Composer.  
+
+	composer require drexelforchrist/collegiatelink-php
+	composer install
+
 
 ## Prerequisites
 
- - PHP >5.0
+ - PHP >5.5
  - some idea of how to write PHP.
+ 
+## Motivation
+ 
+To campus leaders, CollegiateLink is difficult to use for meaningful productivity.  For instance, there's no way to integrate it with a student organization's external website.  This API is meant to help fix that.  Essentially, this API simply mimics user actions. 
 
 ## Use
 
